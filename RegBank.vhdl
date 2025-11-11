@@ -1,0 +1,23 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE work.COMPONENTS.all;
+
+--BANCO DE REGISTRADORES
+ENTITY RegBank  IS
+PORT ( RegWrite, CLK : IN STD_LOGIC;
+	RR1, RR2, WR : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+	RD1, RD2, WD : OUT STD_LOGIC_VECTOR(15 DOWNTO 0));
+END RegBank;
+
+ARCHITECTURE Structure OF RegBank  IS
+BEGIN			
+	--TODO: DECODER KKKK
+
+	PROCESS (CLK)
+	BEGIN
+	IF rising_edge(CLK) AND RegWrite = '1' THEN
+		-- OS REGS AI KKKK
+	END IF;
+
+
+END Structure;
