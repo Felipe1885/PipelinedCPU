@@ -1,5 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all ;
+USE work.package_components.all;
 
 --Entidade do registrador
 ENTITY Registrador IS
@@ -8,7 +9,7 @@ ENTITY Registrador IS
 			Reset: IN STD_LOGIC;
             d_OutReg : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
         );
-END Registrador ;
+END Registrador;
 ARCHITECTURE Behavior OF Registrador IS
 	BEGIN
 	PROCESS ( CLK, Reset )

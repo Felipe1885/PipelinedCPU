@@ -41,4 +41,11 @@ PACKAGE package_components IS
             );
     END COMPONENT;
 
+    -- Componente do Comparador
+    COMPONENT Comparator IS
+        PORT ( A, B: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+               Equal: OUT STD_LOGIC
+            );
+    END COMPONENT;
+
 END PACKAGE package_components;

@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
---Entidade do somador de 4 bits
+--Entidade do somador de 16 bits
 ENTITY Adder IS
 	PORT (A, B: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 		Cin : IN STD_LOGIC;

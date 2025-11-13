@@ -1,5 +1,6 @@
 LIBRARY ieee ;
 USE ieee.std_logic_1164.all ;
+USE work.package_components.all;
 
 --Entidade do full adder
 ENTITY FullAdder IS
