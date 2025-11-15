@@ -62,22 +62,22 @@ BEGIN
 
 
 	-- Port Map dos registradores para escrita neles (cada um escreve WriteData quando seu enable = '1')
-	reg0_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn0,  Clk => Clk, Reset => Reset, d_OutReg => reg0 );
-	reg1_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn1,  Clk => Clk, Reset => Reset, d_OutReg => reg1 );
-	reg2_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn2,  Clk => Clk, Reset => Reset, d_OutReg => reg2 );
-	reg3_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn3,  Clk => Clk, Reset => Reset, d_OutReg => reg3 );
-	reg4_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn4,  Clk => Clk, Reset => Reset, d_OutReg => reg4 );
-	reg5_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn5,  Clk => Clk, Reset => Reset, d_OutReg => reg5 );
-	reg6_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn6,  Clk => Clk, Reset => Reset, d_OutReg => reg6 );
-	reg7_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn7,  Clk => Clk, Reset => Reset, d_OutReg => reg7 );
-	reg8_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn8,  Clk => Clk, Reset => Reset, d_OutReg => reg8 );
-	reg9_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn9,  Clk => Clk, Reset => Reset, d_OutReg => reg9 );
-	reg10_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn10, Clk => Clk, Reset => Reset, d_OutReg => reg10 );
-	reg11_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn11, Clk => Clk, Reset => Reset, d_OutReg => reg11 );
-	reg12_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn12, Clk => Clk, Reset => Reset, d_OutReg => reg12 );
-	reg13_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn13, Clk => Clk, Reset => Reset, d_OutReg => reg13 );
-	reg14_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn14, Clk => Clk, Reset => Reset, d_OutReg => reg14 );
-	reg15_i: Registrador PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn15, Clk => Clk, Reset => Reset, d_OutReg => reg15 );
+	reg0_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn0,  Clk => Clk, Reset => Reset, d_OutReg => reg0 );
+	reg1_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn1,  Clk => Clk, Reset => Reset, d_OutReg => reg1 );
+	reg2_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn2,  Clk => Clk, Reset => Reset, d_OutReg => reg2 );
+	reg3_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn3,  Clk => Clk, Reset => Reset, d_OutReg => reg3 );
+	reg4_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn4,  Clk => Clk, Reset => Reset, d_OutReg => reg4 );
+	reg5_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn5,  Clk => Clk, Reset => Reset, d_OutReg => reg5 );
+	reg6_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn6,  Clk => Clk, Reset => Reset, d_OutReg => reg6 );
+	reg7_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn7,  Clk => Clk, Reset => Reset, d_OutReg => reg7 );
+	reg8_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn8,  Clk => Clk, Reset => Reset, d_OutReg => reg8 );
+	reg9_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn9,  Clk => Clk, Reset => Reset, d_OutReg => reg9 );
+	reg10_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn10, Clk => Clk, Reset => Reset, d_OutReg => reg10 );
+	reg11_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn11, Clk => Clk, Reset => Reset, d_OutReg => reg11 );
+	reg12_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn12, Clk => Clk, Reset => Reset, d_OutReg => reg12 );
+	reg13_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn13, Clk => Clk, Reset => Reset, d_OutReg => reg13 );
+	reg14_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn14, Clk => Clk, Reset => Reset, d_OutReg => reg14 );
+	reg15_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn15, Clk => Clk, Reset => Reset, d_OutReg => reg15 );
 
 
 	-- Mux para escolher qual registrador vai ser a saída do banco de registradores (estágio ID)

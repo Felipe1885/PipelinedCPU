@@ -24,10 +24,13 @@ PACKAGE package_components IS
 
     -- Componente do Registrador
     COMPONENT Registrador IS
-        PORT ( d_InReg : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        GENERIC (
+            N: INTEGER := 16
+        );
+        PORT ( d_InReg : IN STD_LOGIC_VECTOR(N-1 DOWNTO 0);
                En_Reg, Clk : IN STD_LOGIC;
                Reset: IN STD_LOGIC;
-               d_OutReg : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+               d_OutReg : OUT STD_LOGIC_VECTOR(N-1 DOWNTO 0)
             );
     END COMPONENT;
 

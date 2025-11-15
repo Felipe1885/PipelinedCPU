@@ -1,0 +1,128 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE work.package_components.all;
+
+ENTITY Reg_ID_EX IS
+    PORT (
+        Clk: IN STD_LOGIC;
+        Flush: IN STD_LOGIC;
+        
+        -- Inputs
+        --Sinais de Controle (EX)
+        RegDst_In: IN STD_LOGIC;
+        ALUSrc_In: IN STD_LOGIC;
+        ALUop_In: IN STD_LOGIC;
+        
+        --Sinais de Controle (MEM)
+        MemRead_In: IN STD_LOGIC;
+        MemWrite_In: IN STD_LOGIC;
+
+        --Sinais de Controle (WB)
+        RegWrite_In: IN STD_LOGIC;
+        MemtoReg_In: IN STD_LOGIC;
+
+
+        -- Dados
+        ReadData1_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        ReadData2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        SignExt_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        PCplus4_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+        --Endereços
+        Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+
+
+        -- Outputs
+        --Sinais de Controle (EX)
+        RegDst_Out: IN STD_LOGIC;
+        ALUSrc_Out: IN STD_LOGIC;
+        ALUop_Out: IN STD_LOGIC;
+        
+        --Sinais de Controle (MEM)
+        MemRead_Out: IN STD_LOGIC;
+        MemWrite_Out: IN STD_LOGIC;
+
+        --Sinais de Controle (WB)
+        RegWrite_Out: IN STD_LOGIC;
+        MemtoReg_Out: IN STD_LOGIC;
+
+        --Dados
+        ReadData1_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        ReadData2_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        SignExt_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        PCplus4_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+        --Endereços
+        Rs_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rt_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rd_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0)
+    );
+END Reg_ID_EX;
+
+ARCHITECTURE Behavior OF Reg_ID_EX IS
+BEGIN
+    --Sinais (1 bit)
+    --EX
+    RegDst_Reg: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => RegDst_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => RegDst_Out);
+
+    Reg_ALUSrc: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => ALUSrc_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUSrc_Out);
+    
+    Reg_ALUop: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => ALUop_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUop_Out);
+    --MEM
+    Reg_MemRead: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => MemRead_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemRead_Out);
+
+    Reg_MemWrite: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => MemWrite_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemWrite_Out);
+    
+    --WB
+    Reg_RegWrite: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => RegWrite_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => RegWrite_Out);
+
+    Reg_MemtoReg: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => MemtoReg_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemtoReg_Out);
+    
+    --Dados (16 bits)
+    Reg_ReadData1: Registrador 
+        GENERIC MAP (N => 16)
+        PORT MAP (d_InReg => ReadData1_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => ReadData1_Out);
+
+    Reg_ReadData2: Registrador 
+        GENERIC MAP (N => 16)
+        PORT MAP (d_InReg => ReadData2_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => ReadData2_Out);
+
+    Reg_SignExt: Registrador 
+        GENERIC MAP (N => 16)
+        PORT MAP (d_InReg => SignExt_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => SignExt_Out);
+    
+    Reg_PCplus4: Registrador 
+        GENERIC MAP (N => 16)
+        PORT MAP (d_InReg => PCplus4_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => PCplus4_Out);
+
+
+    --Endereços (4 bits)
+    Reg_Rs: Registrador 
+        GENERIC MAP (N => 4)
+        PORT MAP (d_InReg => Rs_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rs_Out);
+
+    Reg_Rt: Registrador 
+        GENERIC MAP (N => 4)
+        PORT MAP (d_InReg => Rt_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rt_Out);
+
+    Reg_Rd: Registrador 
+        GENERIC MAP (N => 4)
+        PORT MAP (d_InReg => Rd_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rd_Out);
+
+END Behavior;
