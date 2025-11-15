@@ -26,7 +26,7 @@ ENTITY Reg_ID_EX IS
         ReadData1_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         ReadData2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         SignExt_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PCplus4_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
         Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -52,7 +52,7 @@ ENTITY Reg_ID_EX IS
         ReadData1_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         ReadData2_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         SignExt_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PCplus4_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        PCplus2_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
         Rs_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -65,7 +65,7 @@ ARCHITECTURE Behavior OF Reg_ID_EX IS
 BEGIN
     --Sinais (1 bit)
     --EX
-    RegDst_Reg: Registrador 
+    Reg_RegDst: Registrador 
         GENERIC MAP (N => 1)
         PORT MAP (d_InReg(0) => RegDst_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => RegDst_Out);
 
@@ -76,6 +76,7 @@ BEGIN
     Reg_ALUop: Registrador 
         GENERIC MAP (N => 1)
         PORT MAP (d_InReg(0) => ALUop_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUop_Out);
+    
     --MEM
     Reg_MemRead: Registrador 
         GENERIC MAP (N => 1)
@@ -107,9 +108,9 @@ BEGIN
         GENERIC MAP (N => 16)
         PORT MAP (d_InReg => SignExt_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => SignExt_Out);
     
-    Reg_PCplus4: Registrador 
+    Reg_PCplus2: Registrador 
         GENERIC MAP (N => 16)
-        PORT MAP (d_InReg => PCplus4_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => PCplus4_Out);
+        PORT MAP (d_InReg => PCplus2_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => PCplus2_Out);
 
 
     --Endereços (4 bits)

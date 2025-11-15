@@ -10,11 +10,11 @@ ENTITY Reg_IF_ID IS
 
         -- Inputs
         Instruction_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PCplus4_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);   
+        PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);   
 
         -- Outputs
         Instruction_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PCplus4_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0)    
+        PCplus2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0)    
     );
 END Reg_IF_ID;
 
@@ -22,6 +22,6 @@ ARCHITECTURE Behavior OF Reg_IF_ID IS
 BEGIN
 
     Reg_Instruction: Registrador GENERIC MAP (N => 16) PORT MAP (d_InReg => Instruction_In, En_Reg => WriteEn, Clk => Clk, Reset => Flush, d_OutReg => Instruction_Out);
-    Reg_PCplus4: Registrador GENERIC MAP (N => 16) PORT MAP (d_InReg => PCplus4_In, En_Reg => WriteEn, Clk => Clk, Reset => Flush, d_OutReg => PCplus4_Out);
+    Reg_PCplus2: Registrador GENERIC MAP (N => 16) PORT MAP (d_InReg => PCplus2_In, En_Reg => WriteEn, Clk => Clk, Reset => Flush, d_OutReg => PCplus2_Out);
 
 END Behavior;
