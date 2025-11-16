@@ -11,7 +11,7 @@ ENTITY Reg_ID_EX IS
         -- Inputs
         --Sinais de Controle (EX)
         RegDst_In: IN STD_LOGIC;
-        ALUSrc_In: IN STD_LOGIC;
+        ALUsrc_In: IN STD_LOGIC;
         ALUop_In: IN STD_LOGIC;
         
         --Sinais de Controle (MEM)
@@ -39,7 +39,7 @@ ENTITY Reg_ID_EX IS
         -- Outputs
         --Sinais de Controle (EX)
         RegDst_Out: IN STD_LOGIC;
-        ALUSrc_Out: IN STD_LOGIC;
+        ALUsrc_Out: IN STD_LOGIC;
         ALUop_Out: IN STD_LOGIC;
         
         --Sinais de Controle (MEM)
@@ -74,7 +74,7 @@ BEGIN
 
     Reg_ALUSrc: Registrador 
         GENERIC MAP (N => 1)
-        PORT MAP (d_InReg(0) => ALUSrc_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUSrc_Out);
+        PORT MAP (d_InReg(0) => ALUsrc_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUsrc_Out);
     
     Reg_ALUop: Registrador 
         GENERIC MAP (N => 1)
