@@ -51,4 +51,11 @@ PACKAGE package_components IS
             );
     END COMPONENT;
 
+    -- Componente do Extensor de Sinal
+    COMPONENT SignExt IS
+        PORT ( DataIn: IN STD_LOGIC_VECTOR(4 DOWNTO 0);
+               DataOut: OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+            );
+    END COMPONENT;
+
 END PACKAGE package_components;

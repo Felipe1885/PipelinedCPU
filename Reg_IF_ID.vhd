@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+--Entidade do Registrador IF/ID
 ENTITY Reg_IF_ID IS
     PORT (
         Clk: IN STD_LOGIC;

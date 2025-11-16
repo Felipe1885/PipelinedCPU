@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+--Entidade do Registrador MEM/WB
 ENTITY Reg_MEM_WB IS
     PORT (
         Clk: IN STD_LOGIC;

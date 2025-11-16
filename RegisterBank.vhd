@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
--- Banco de 16 registradores de 16 bits
+--Banco de 16 registradores de 16 bits
 ENTITY RegisterBank IS
 	PORT (
 		RegWrite: IN  STD_LOGIC;
