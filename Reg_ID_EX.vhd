@@ -15,6 +15,7 @@ ENTITY Reg_ID_EX IS
         ALUop_In: IN STD_LOGIC;
         
         --Sinais de Controle (MEM)
+        Branch_In: IN STD_LOGIC;
         MemRead_In: IN STD_LOGIC;
         MemWrite_In: IN STD_LOGIC;
 
@@ -42,6 +43,7 @@ ENTITY Reg_ID_EX IS
         ALUop_Out: IN STD_LOGIC;
         
         --Sinais de Controle (MEM)
+        Branch_Out: IN STD_LOGIC;
         MemRead_Out: IN STD_LOGIC;
         MemWrite_Out: IN STD_LOGIC;
 
@@ -79,6 +81,10 @@ BEGIN
         PORT MAP (d_InReg(0) => ALUop_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => ALUop_Out);
     
     --MEM
+    Reg_Branch: Registrador 
+        GENERIC MAP (N => 1)
+        PORT MAP (d_InReg(0) => Branch_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => Branch_Out);
+
     Reg_MemRead: Registrador 
         GENERIC MAP (N => 1)
         PORT MAP (d_InReg(0) => MemRead_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemRead_Out);
