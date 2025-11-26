@@ -5,29 +5,20 @@ USE work.package_components.all;
 
 --Entidade da Memória
 ENTITY InstructionMemory IS
---Entidade da Memória
-ENTITY InstructionMemory IS
 	PORT ( Address : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
            Instruction : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
 END InstructionMemory;
-    );
-END InstructionMemory;
 
-ARCHITECTURE Behavior OF InstructionMemory IS
 ARCHITECTURE Behavior OF InstructionMemory IS
 
 TYPE MemArray IS ARRAY (65535 DOWNTO 0) OF STD_LOGIC_VECTOR (7 DOWNTO 0);
 SIGNAL Mem : MemArray := (        
 
         -- Endereço 0x0000 (0): LW $r1, 2($r0) 
-        -- Endereço 0x0000 (0): LW $r1, 2($r0) 
         0 => b"00100000",  
         1 => b"00100010",   
 
-        -- 3 NOPs do load
-        2 => b"00000000", 
-        3 => b"00000000", 
         -- 3 NOPs do load
         2 => b"00000000", 
         3 => b"00000000", 
@@ -36,7 +27,6 @@ SIGNAL Mem : MemArray := (
         5 => b"00000000", 
         --NOP
         6 => b"00000000", 
-        7 => b"00000000",
         7 => b"00000000",
 
 
@@ -60,18 +50,13 @@ SIGNAL Mem : MemArray := (
         17  => b"00100111",
 
         --3 NOPs do sub
-        --3 NOPs do sub
         18 => b"00000000", 
         19 => b"00000000", 
         --NOP
         20 => b"00000000", 
         21 => b"00000000", 
         --NOP
-        20 => b"00000000", 
-        21 => b"00000000", 
-        --NOP
         22 => b"00000000", 
-        23 => b"00000000",
         23 => b"00000000",
 
 
@@ -82,10 +67,6 @@ SIGNAL Mem : MemArray := (
         -- 3 NOPs do branch
         26 => b"00000000", 
         27 => b"00000000", 
-        -- NOP
-        28 => b"00000000", 
-        29 => b"00000000", 
-        -- NOP
         -- NOP
         28 => b"00000000", 
         29 => b"00000000", 
@@ -113,7 +94,6 @@ SIGNAL Mem : MemArray := (
     
 SIGNAL IntegerAddrs : integer;
 
-BEGIN
 BEGIN
 
     IntegerAddrs <= to_integer(unsigned(Address));

@@ -4,14 +4,14 @@ use IEEE.NUMERIC_STD.ALL;
 USE work.package_components.all;
 
 --Entidade da Memoriua
-ENTITY Memory IS
+ENTITY DataMemory IS
 	PORT ( Address, WriteData : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
            MemWrite, MemRead, CLK : IN STD_LOGIC;
            ReadData : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
         );
-END Memory;
+END DataMemory;
 
-ARCHITECTURE Behavior OF Memory IS
+ARCHITECTURE Behavior OF DataMemory IS
 
 TYPE MemArray IS ARRAY (65535 DOWNTO 0) OF STD_LOGIC_VECTOR (7 DOWNTO 0);
 SIGNAL Mem : MemArray;

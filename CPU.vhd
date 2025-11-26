@@ -13,23 +13,235 @@ ENTITY CPU IS
 END CPU;
 
 ARCHITECTURE Behavior OF CPU IS
+        -- Sinais globais
+        signal Clk, Reset: STD_LOGIC;
 
-signal ENABLE_PC, RESET_PC, REG_WRITE_BANK, RESET_REG_BANK, ULA_OP, ULA_ZERO, ADDER_PC_CARRY_OUT, ADDER_BRANCH_CARRY_OUT, UC_BRANCH, UC_MEM_WRITE, UC_MEM_READ, UC_MEM_TO_REG, UC_REG_WRITE, UC_REG_DST, UC_ULA_SRC, UC_ULA_OP, UC_JUMP, MEMORY_WRITE, MEMORY_READ, ID_RegDst, ID_ALUsrc, ID_ALUop, ID_Branch, ID_MemRead, ID_MemWrite, ID_RegWrite, ID_MemtoReg, ID_Jump, EX_RegDst, EX_ALUsrc, EX_ALUop, EX_Branch, EX_MemRead, EX_MemWrite, EX_RegWrite, EX_MemtoReg, EX_Zero, MEM_Branch, MEM_Zero, MEM_MemRead, MEM_MemWrite, MEM_RegWrite, MEM_MemtoReg, WB_RegWrite, WB_MemtoReg, Pipeline_Flush, PCSrc : STD_LOGIC;
-signal REAF_REG_1_BANK, READ_REG_2_BANK, WRITE_REG_BANK, UC_OPCODE, UC_FUNCTION, ID_Rs, ID_Rt, ID_Rd, EX_Rs, EX_Rt, EX_Rd, EX_Rdest, MEM_Rdest, WB_Rdest : STD_LOGIC_VECTOR(3 DOWNTO 0);
-signal DATA_IN_PC, DATA_OUT_PC, WRITE_DATA_REG_BANK, READ_1_REG_BANK, READ_2_REG_BANK, SRC_ULA_A, SRC_ULA_B, ULA_RESULT, SRC_ADDER_PC_A, ADDER_PC_RESULT, SRC_ADDER_BRANCH_A, SRC_ADDER_BRANCH_B, ADDER_BRANCH_RESULT, INSTRUCTION_MEMORY_ADDRESS, INSTRUCTION_MEMORY_OUT, MEMORY_ADDRESS, MEMORY_WRITE_DATA, MEMORY_READ_DATA, IF_Instruction, IF_PCplus2, ID_Instruction, ID_PCplus2, ID_ReadData1, ID_ReadData2, ID_SignExt, EX_ReadData1, EX_ReadData2, EX_SignExt, EX_PCplus2, EX_ALUout, EX_BranchAddr, EX_WriteData, MEM_BranchAddr, MEM_ALUout, MEM_WriteData, MEM_ReadData, WB_ReadData, WB_ALUout, WB_WriteData, PC_plus_2, Shifted_Ext : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
-    Stage0: PC PORT MAP (CLK, ENABLE_PC = 1, RESET_PC, DATA_IN_PC, DATA_OUT_PC);
-    Stage1: RegisterBank PORT MAP(REG_WRITE_BANK, CLK, RESET_REG_BANK, REAF_REG_1_BANK, READ_REG_2_BANK,WRITE_REG_BANK, WRITE_DATA_REG_BANK, READ_1_REG_BANK, READ_2_REG_BANK);
-    Stage2: ULA PORT MAP(SRC_ULA_A, SRC_ULA_B, ULA_OP, ULA_RESULT, ULA_ZERO);
-    Stage3: Adder PORT MAP(SRC_ADDER_PC_A, x"0002", x"0000", ADDER_PC_RESULT, ADDER_PC_CARRY_OUT); --ADDER PRO PC
-    Stage4: Adder PORT MAP(SRC_ADDER_BRANCH_A, SRC_ADDER_BRANCH_B, x"0000", ADDER_BRANCH_RESULT, ADDER_BRANCH_CARRY_OUT);
-    Stage5: UC PORT MAP(UC_OPCODE, UC_FUNCTION, UC_BRANCH, UC_MEM_WRITE, UC_MEM_READ, UC_MEM_TO_REG, UC_REG_WRITE, UC_REG_DST, UC_ULA_SRC, UC_ULA_OP, UC_JUMP);
-    Stage6: InstructionMemory PORT MAP(INSTRUCTION_MEMORY_ADDRESS, INSTRUCTION_MEMORY_OUT);
-    Stage7: Memory PORT MAP(MEMORY_ADDRESS, MEMORY_WRITE_DATA, MEMORY_WRITE, MEMORY_READ, CLK, MEMORY_READ_DATA);
-    Stage8: Reg_IF_ID PORT MAP( CLK, Pipeline_Flush, IF_Instruction, IF_PCplus2, ID_Instruction, ID_PCplus2);
-    Stage9: Reg_ID_EX PORT MAP( CLK, Pipeline_Flush, ID_RegDst, ID_ALUsrc, ID_ALUop, ID_Branch, ID_MemRead, ID_MemWrite, ID_RegWrite, ID_MemtoReg, ID_ReadData1, ID_ReadData2, ID_SignExt, ID_PCplus2, ID_Rs, ID_Rt, ID_Rd, EX_RegDst, EX_ALUsrc, EX_ALUop, EX_Branch, EX_MemRead, EX_MemWrite, EX_RegWrite, EX_MemtoReg, EX_ReadData1, EX_ReadData2, EX_SignExt, EX_PCplus2, EX_Rs, EX_Rt, EX_Rd );
-    Stage10: Reg_EX_MEM PORT MAP( CLK, Pipeline_Flush, EX_Branch, EX_Zero, EX_MemRead, EX_MemWrite, EX_RegWrite, EX_MemtoReg, EX_BranchAddr, EX_ALUout, EX_WriteData, EX_Rdest, MEM_Branch, MEM_Zero, MEM_MemRead, MEM_MemWrite, MEM_RegWrite, MEM_MemtoReg, MEM_BranchAddr, MEM_ALUout, MEM_WriteData, MEM_Rdest );
-    Stage11: Reg_MEM_WB PORT MAP( CLK, Pipeline_Flush,MEM_RegWrite, MEM_MemtoReg,MEM_ReadData, MEM_ALUout, MEM_Rdest, WB_RegWrite, WB_MemtoReg,WB_ReadData, WB_ALUout,WB_Rdest );
+        -- Sinais internos (IF)
+        -- Dados
+        signal PC_In, PC_Out, PCplus2, Instruction_IF: STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+
+        -- Sinais internos (ID)
+        -- Dados
+        signal PCplus2_ID, Instruction_ID, ReadData1_ID, ReadData2_ID, SignExt_ID: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        -- Controle
+        signal Branch_ID, MemWrite_ID, MemRead_ID, MemtoReg_ID, RegWrite_ID, RegDst_ID, ALUsrc_ID, ALUop_ID, Jump_ID: STD_LOGIC;
+        -- Endereços
+
+
+        -- Sinais internos (EX)
+        -- Dados
+        signal PCplus2_EX, ReadData1_EX, ReadData2_EX, SignExt_EX, ALUout_EX, Mux_ULA_B, BranchAddr_EX: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        -- Controle
+        signal RegDst_EX, ALUsrc_EX, ALUop_EX, Branch_EX, MemRead_EX, MemWrite_EX, RegWrite_EX, MemtoReg_EX, Zero_EX: STD_LOGIC;
+        -- Endereços
+        signal Rdest_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
+
+        
+        -- Sinais internos (MEM)
+        -- Dados
+        signal WriteData_MEM, BranchAddr_MEM, ALUout_MEM, ReadData_MEM: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        -- Controle
+        signal Branch_MEM, Zero_MEM, MemRead_MEM, MemWrite_MEM, RegWrite_MEM, MemtoReg_MEM: STD_LOGIC;
+        -- Endereços
+        signal Rdest_MEM, Rt_EX, Rd_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
+
+
+        -- Sinais internos (WB)
+        -- Dados
+        signal WriteData_WB, ALUout_WB, Data_WB: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        -- Controle
+        signal RegWrite_WB, MemtoReg_WB: STD_LOGIC;
+        -- Endereços
+        signal Rdest_WB: STD_LOGIC_VECTOR(3 DOWNTO 0);
+
+
+    PC_inst: PC 
+        PORT MAP (
+		Clk => Clk,
+                Reset => Reset,
+                PC_In => PC_In,
+                PC_Out => PC_Out
+        );
+    
+    InstructionMemory_inst: InstructionMemory
+        PORT MAP (
+                Address => PC_Out,
+                Instruction => Instruction_IF
+        );
+    
+    Adder_PC_inst: Adder 
+        PORT MAP (
+                A => PC_Out,
+                B => "0000000000000010",
+                Cin => '0',
+                S => PCplus2,
+                Cout => OPEN
+        ); --ADDER PRO PC
+    
+    Reg_IF_ID_inst: Reg_IF_ID 
+        PORT MAP(
+                Clk => Clk,
+                Flush => Reset,
+                WriteEn => '1',
+                Instruction_In => Instruction_IF,
+                PCplus2_In => PCplus2,
+                Instruction_Out => Instruction_ID,
+                PCplus2_Out => PCplus2_ID
+        );
+    
+    RegisterBank_inst: RegisterBank 
+        PORT MAP(
+                RegWrite => RegWrite_WB,
+                Clk => Clk,
+                Reset => Reset,
+                ReadReg1 => Instruction_ID(12 DOWNTO 9),  -- rs
+                ReadReg2 => Instruction_ID(8 DOWNTO 5),   -- rt
+                WriteReg => Rdest_WB,
+                WriteData => Data_WB,
+                ReadData1 => ReadData1_ID,
+                ReadData2 => ReadData2_ID
+        );
+    
+    UC_inst: UC 
+        PORT MAP(
+                OpCode => Instruction_ID(15 DOWNTO 13),
+                Funct => Instruction_ID(0),
+                Branch => Branch_ID,
+                MemWrite => MemWrite_ID,
+                MemRead => MemRead_ID,
+                MemToReg => MemToReg_ID,
+                RegWrite => RegWrite_ID,
+                RegDst => RegDst_ID,
+                ALUsrc => ALUsrc_ID,
+                ALUop => ALUop_ID,
+                Jump => Jump_ID
+        );
+
+    SignExtend_inst: SignExt
+        PORT MAP (
+                DataIn => Instruction_ID(4 DOWNTO 0),
+                DataOut => SignExt_ID
+        );
+
+        
+    Reg_ID_EX_inst: Reg_ID_EX 
+        PORT MAP (
+                -- Inputs
+                Clk => Clk,
+                Flush => Reset,
+                RegDst_In => RegDst_ID,
+                ALUsrc_In => ALUsrc_ID,
+                ALUop_In => ALUop_ID,
+                Branch_In => Branch_ID,
+                MemRead_In => MemRead_ID,
+                MemWrite_In => MemWrite_ID,
+                RegWrite_In => RegWrite_ID,
+                MemtoReg_In => MemtoReg_ID,
+                ReadData1_In => ReadData1_ID,
+                ReadData2_In => ReadData2_ID,
+                SignExt_In => SignExt_ID,
+                PCplus2_In => PCplus2_ID,
+                -- Rs_In => Instruction_ID(12 DOWNTO 9), --so para o forwarding
+                Rt_In => Instruction_ID(8 DOWNTO 5),
+                Rd_In => Instruction_ID(4 DOWNTO 1),
+
+                -- Outputs
+                RegDst_Out => RegDst_EX,
+                ALUsrc_Out => ALUsrc_EX,
+                ALUop_Out => ALUop_EX,
+                Branch_Out => Branch_EX,
+                MemRead_Out => MemRead_EX,
+                MemWrite_Out => MemWrite_EX,
+                RegWrite_Out => RegWrite_EX,
+                MemtoReg_Out => MemtoReg_EX,
+                ReadData1_Out => ReadData1_EX,
+                ReadData2_Out => ReadData2_EX,
+                SignExt_Out => SignExt_EX,
+                PCplus2_Out => PCplus2_EX,
+                -- Rs_Out => Rs_EX, --so para o forwarding
+                Rt_Out => Rt_EX,
+                Rd_Out => Rd_EX 
+        );
+
+    ULA_inst: ULA 
+        PORT MAP (
+                A => ReadData1_EX,
+                B => Mux_ULA_B,         -- fazer mux do B da ULA
+                ALU_Op => ALUop_EX,
+                Result => ALUout_EX,
+                Zero => Zero_EX
+        );
+        
+    Adder_Branch_inst: Adder 
+        PORT MAP (
+                A => PCplus2_EX,
+                --B => SignExt_EX(13 DOWNTO 0) & "0", -- precisa da parte de shift left, n tenho certeza se ta certo
+                Cin => '0',
+                S => BranchAddr_EX,
+                Cout => OPEN
+        ); --ADDER PRO BRANCH          
+                
+    Reg_EX_MEM_inst: Reg_EX_MEM
+        PORT MAP(
+                -- Inputs
+                Clk => Clk,
+                Flush => Reset,
+                Branch_In => Branch_EX,
+                Zero_In => Zero_EX,
+                MemRead_In => MemRead_EX,
+                MemWrite_In => MemWrite_EX,
+                RegWrite_In => RegWrite_EX,
+                MemtoReg_In => MemtoReg_EX,
+                BranchAddr_In => BranchAddr_EX,
+                ALUout_In => ALUout_EX,
+                WriteData_In => ReadData2_EX,
+                Rdest_In => Rdest_EX,                   --fazer o mux para escolher rt ou rd
+                
+                -- Outputs
+                Branch_Out => Branch_MEM,
+                Zero_Out => Zero_MEM,
+                MemRead_Out => MemRead_MEM,
+                MemWrite_Out => MemWrite_MEM,
+                RegWrite_Out => RegWrite_MEM,
+                MemtoReg_Out => MemtoReg_MEM,
+                BranchAddr_Out => BranchAddr_MEM,
+                ALUout_Out => ALUout_MEM,
+                WriteData_Out => WriteData_MEM,
+                Rdest_Out => Rdest_MEM                  --fazer o mux para escolher rt ou rd
+        );
+                
+    DataMemory_inst: DataMemory 
+        PORT MAP (
+                Address => ALUout_MEM,
+                WriteData => WriteData_MEM,
+                MemWrite => MemWrite_MEM,
+                MemRead => MemRead_MEM,
+                Clk => Clk,
+                ReadData => ReadData_MEM
+            );
+
+    Reg_MEM_WB_inst: Reg_MEM_WB
+        PORT MAP(
+                -- Inputs
+                Clk => Clk,
+                Flush => Reset,
+                RegWrite_In => RegWrite_MEM,
+                MemtoReg_In => MemtoReg_MEM,
+                ReadData_In => ReadData_MEM,
+                ALUout_In => ALUout_MEM,
+                Rdest_In => Rdest_MEM,
+
+                -- Outputs
+                RegWrite_Out => RegWrite_WB,
+                MemtoReg_Out => MemtoReg_WB,
+                ReadData_Out => ReadData_WB,                --fazer mux entre esse sinal e ALUout_WB, para sair Data_WB
+                ALUout_Out => ALUout_WB,                    --fazer mux entre esse sinal e ReadData_WB, para sair Data_WB
+                Rdest_Out => Rdest_WB
+        );
+
+
 
     WITH -- SELECT					
         HEX7 <= "0000001" WHEN "0000",

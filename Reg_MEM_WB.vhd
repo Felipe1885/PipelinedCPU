@@ -10,8 +10,8 @@ ENTITY Reg_MEM_WB IS
 
         --Inputs
         --Sinais de Controle (WB)
-        RegWrite_in: IN STD_LOGIC;
-        MemtoReg_in: IN STD_LOGIC;
+        RegWrite_In: IN STD_LOGIC;
+        MemtoReg_In: IN STD_LOGIC;
 
         --Dados
         ReadData_In: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -23,8 +23,8 @@ ENTITY Reg_MEM_WB IS
 
         --Outputs
         --Sinais de Controle (WB)
-        RegWrite_out: OUT STD_LOGIC;
-        MemtoReg_out: OUT STD_LOGIC;
+        RegWrite_Out: OUT STD_LOGIC;
+        MemtoReg_Out: OUT STD_LOGIC;
 
         --Dados
         ReadData_Out: OUT STD_LOGIC_VECTOR (15 DOWNTO 0);
@@ -41,12 +41,11 @@ BEGIN
     --WB
     Reg_RegWrite: Registrador 
         GENERIC MAP (N => 1)
-        PORT MAP (d_InReg(0) => RegWrite_in, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => RegWrite_out);
+        PORT MAP (d_InReg(0) => RegWrite_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => RegWrite_Out);
 
     Reg_MemtoReg: Registrador 
         GENERIC MAP (N => 1)
-        PORT MAP (d_InReg(0) => MemtoReg_in, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemtoReg_out);
-
+        PORT MAP (d_InReg(0) => MemtoReg_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg(0) => MemtoReg_Out);
     --Dados (16 bits)
     Reg_ReadData: Registrador 
         GENERIC MAP (N => 16)

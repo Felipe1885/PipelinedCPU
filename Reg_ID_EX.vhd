@@ -31,36 +31,35 @@ ENTITY Reg_ID_EX IS
         PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        --Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
 
 
         -- Outputs
         --Sinais de Controle (EX)
-        RegDst_Out: IN STD_LOGIC;
-        ALUsrc_Out: IN STD_LOGIC;
-        ALUop_Out: IN STD_LOGIC;
+        RegDst_Out: OUT STD_LOGIC;
+        ALUsrc_Out: OUT STD_LOGIC;
+        ALUop_Out: OUT STD_LOGIC;
         
         --Sinais de Controle (MEM)
-        Branch_Out: IN STD_LOGIC;
-        MemRead_Out: IN STD_LOGIC;
-        MemWrite_Out: IN STD_LOGIC;
+        Branch_Out: OUT STD_LOGIC;
+        MemRead_Out: OUT STD_LOGIC;
+        MemWrite_Out: OUT STD_LOGIC;
 
         --Sinais de Controle (WB)
-        RegWrite_Out: IN STD_LOGIC;
-        MemtoReg_Out: IN STD_LOGIC;
-
+        RegWrite_Out: OUT STD_LOGIC;
+        MemtoReg_Out: OUT STD_LOGIC;
         --Dados
-        ReadData1_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        ReadData2_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        SignExt_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PCplus2_Out: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+        ReadData1_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        ReadData2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        SignExt_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+        PCplus2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rs_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        Rt_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        Rd_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0)
+        --Rs_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rt_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rd_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)  -- só para forwarding
     );
 END Reg_ID_EX;
 
@@ -121,9 +120,9 @@ BEGIN
 
 
     --Endereços (4 bits)
-    Reg_Rs: Registrador 
-        GENERIC MAP (N => 4)
-        PORT MAP (d_InReg => Rs_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rs_Out);
+    --Reg_Rs: Registrador 
+    --    GENERIC MAP (N => 4)
+    --    PORT MAP (d_InReg => Rs_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rs_Out);
 
     Reg_Rt: Registrador 
         GENERIC MAP (N => 4)

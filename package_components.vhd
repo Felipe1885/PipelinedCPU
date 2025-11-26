@@ -27,7 +27,7 @@ PACKAGE package_components IS
     -- Componente da ULA
     COMPONENT ULA IS
         PORT ( A, B: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-               ALU_function: IN STD_LOGIC;
+               ALU_Op: IN STD_LOGIC;
                Result: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
                Zero: OUT STD_LOGIC;
             );
@@ -254,8 +254,8 @@ PACKAGE package_components IS
     END COMPONENT;
 
 
-    -- Componente da Memória
-    COMPONENT Memory IS
+    -- Componente da Memória de Dados
+    COMPONENT DataMemory IS
         PORT ( Address, WriteData: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
             MemWrite, MemRead, CLK: IN STD_LOGIC;
             ReadData: OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
