@@ -25,7 +25,7 @@ ENTITY Reg_EX_MEM IS
         WriteData_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        --Rdest_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);             --rt ou rd, se for fazer o forwarding
+        Rdest_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);             --rt ou rd, se for fazer o forwarding
 
 
         --Outputs
@@ -45,7 +45,7 @@ ENTITY Reg_EX_MEM IS
         WriteData_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        --Rdest_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)             --rt ou rd, se for fazer o forwarding
+        Rdest_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)             --rt ou rd, se for fazer o forwarding
     );
 END Reg_EX_MEM;
 
@@ -92,8 +92,8 @@ BEGIN
         PORT MAP (d_InReg => WriteData_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => WriteData_Out);
 
     --Endereços (4 bits)
-    --Reg_Rdest: Registrador 
-    --    GENERIC MAP (N => 4)
-    --    PORT MAP (d_InReg => Rdest_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rdest_Out);
+    Reg_Rdest: Registrador 
+        GENERIC MAP (N => 4)
+        PORT MAP (d_InReg => Rdest_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rdest_Out);
 
 END Behavior;

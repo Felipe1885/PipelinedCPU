@@ -31,7 +31,7 @@ ENTITY Reg_MEM_WB IS
         ALUout_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rdest_Out: OUT STD_LOGIC_VECTOR (3 DOWNTO 0);             --rt ou rd
+        Rdest_Out: OUT STD_LOGIC_VECTOR (3 DOWNTO 0)             --rt ou rd
 
     );
 END Reg_MEM_WB;

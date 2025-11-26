@@ -7,7 +7,7 @@ ENTITY ULA IS
     PORT ( A, B: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
            ALU_Op: IN STD_LOGIC;
            Result: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-           Zero: OUT STD_LOGIC;
+           Zero: OUT STD_LOGIC
            --Overflow: OUT STD_LOGIC 
         );
 END ULA;

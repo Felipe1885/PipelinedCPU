@@ -50,13 +50,18 @@ ARCHITECTURE Behavior OF CPU IS
 
         -- Sinais internos (WB)
         -- Dados
-        signal WriteData_WB, ALUout_WB, Data_WB: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        signal WriteData_WB, ReadData_WB, ALUout_WB, Data_WB: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
         signal RegWrite_WB, MemtoReg_WB: STD_LOGIC;
         -- Endereços
         signal Rdest_WB: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
-
+        --Sinais extras
+        SIGNAL PCsrc : STD_LOGIC;
+        SIGNAL JMP_Address : STD_LOGIC_VECTOR(15 DOWNTO 0);
+        SIGNAL PC_MUX : STD_LOGIC_VECTOR(1 DOWNTO 0);
+BEGIN
+		  
     PC_inst: PC 
         PORT MAP (
 		Clk => Clk,
@@ -84,7 +89,7 @@ ARCHITECTURE Behavior OF CPU IS
         PORT MAP(
                 Clk => Clk,
                 Flush => Reset,
-                WriteEn => '1',
+                --WriteEn => '1',
                 Instruction_In => Instruction_IF,
                 PCplus2_In => PCplus2,
                 Instruction_Out => Instruction_ID,
@@ -177,7 +182,7 @@ ARCHITECTURE Behavior OF CPU IS
     Adder_Branch_inst: Adder 
         PORT MAP (
                 A => PCplus2_EX,
-                --B => SignExt_EX(13 DOWNTO 0) & "0", -- precisa da parte de shift left, n tenho certeza se ta certo
+                B => SignExt_EX(14 DOWNTO 0) & "0",
                 Cin => '0',
                 S => BranchAddr_EX,
                 Cout => OPEN
@@ -241,7 +246,26 @@ ARCHITECTURE Behavior OF CPU IS
                 Rdest_Out => Rdest_WB
         );
 
+PCsrc <= (Branch_MEM)AND(Zero_MEM);
+JMP_Address <= PCplus2_ID(15 DOWNTO 13) & SignExt_ID(12 DOWNTO 0);
+PC_MUX <= Jump_ID & PCsrc;
 
+WITH PC_MUX SELECT
+PC_In <= BranchAddr_MEM WHEN "01",
+        JMP_Address WHEN "10",
+	PCplus2 WHEN OTHERS;
+
+WITH RegDst_EX SELECT
+Rdest_EX <= Rt_EX WHEN '0',
+	Rd_EX WHEN OTHERS;
+
+WITH ALUsrc_EX SELECT
+Mux_ULA_B <= ReadData2_EX WHEN '0',
+	SignExt_EX WHEN OTHERS;
+
+WITH MemtoReg_WB SELECT
+Data_WB <= ReadData_WB WHEN '1',
+	ALUout_WB WHEN OTHERS;
 
     WITH -- SELECT					
         HEX7 <= "0000001" WHEN "0000",
