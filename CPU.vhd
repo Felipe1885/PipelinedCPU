@@ -32,7 +32,7 @@ ARCHITECTURE Behavior OF CPU IS
 
     -- Sinais internos (EX)
         -- Dados
-        signal PCplus2_EX, ReadData1_EX, ReadData2_EX, SignExt_EX, ALUout_EX, Mux_ULA_B, BranchAddr_EX: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        signal PCplus2_EX, ReadData1_EX, ReadData2_EX, SignExt_EX, ALUout_EX, Mux_Forwarding_A, Mux_ULA_B, MUX_Forwarding_B, BranchAddr_EX: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
         signal RegDst_EX, ALUsrc_EX, ALUop_EX, Branch_EX, MemRead_EX, MemWrite_EX, RegWrite_EX, MemtoReg_EX, Zero_EX: STD_LOGIC;
         -- Endereços
@@ -45,7 +45,7 @@ ARCHITECTURE Behavior OF CPU IS
         -- Controle
         signal Branch_MEM, Zero_MEM, MemRead_MEM, MemWrite_MEM, RegWrite_MEM, MemtoReg_MEM: STD_LOGIC;
         -- Endereços
-        signal Rdest_MEM, Rt_EX, Rd_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
+        signal Rdest_MEM, Rs_EX, Rt_EX, Rd_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
         
         
         -- Sinais internos (WB)
@@ -57,11 +57,12 @@ ARCHITECTURE Behavior OF CPU IS
         signal Rdest_WB: STD_LOGIC_VECTOR(3 DOWNTO 0);
         
         --Sinais extras
-        signal PCsrc : STD_LOGIC;
-        signal JMP_Address : STD_LOGIC_VECTOR(15 DOWNTO 0);
-        signal PC_MUX : STD_LOGIC_VECTOR(1 DOWNTO 0);
-        signal Jump_Target : std_logic_vector(12 downto 0);
-        
+        signal PCsrc: STD_LOGIC;
+        signal JMP_Address: STD_LOGIC_VECTOR(15 DOWNTO 0);
+        signal PC_MUX: STD_LOGIC_VECTOR(1 DOWNTO 0);
+        signal Jump_Target: STD_LOGIC_VECTOR(12 downto 0);
+        signal ForwardA, ForwardB: STD_LOGIC_VECTOR(1 DOWNTO 0);
+
         -- Sinais dos Displays de 7 Segmentos
         signal Disp0, Disp1, Disp2, Disp3, Disp4, Disp5, Disp6, Disp7: STD_LOGIC_VECTOR(3 DOWNTO 0);
 BEGIN
@@ -152,7 +153,7 @@ BEGIN
                 ReadData2_In => ReadData2_ID,
                 SignExt_In => SignExt_ID,
                 PCplus2_In => PCplus2_ID,
-                -- Rs_In => Instruction_ID(12 DOWNTO 9), --so para o forwarding
+                Rs_In => Instruction_ID(12 DOWNTO 9), --so para o forwarding
                 Rt_In => Instruction_ID(8 DOWNTO 5),
                 Rd_In => Instruction_ID(4 DOWNTO 1),
 
@@ -169,14 +170,26 @@ BEGIN
                 ReadData2_Out => ReadData2_EX,
                 SignExt_Out => SignExt_EX,
                 PCplus2_Out => PCplus2_EX,
-                -- Rs_Out => Rs_EX, --so para o forwarding
+                Rs_Out => Rs_EX, --so para o forwarding
                 Rt_Out => Rt_EX,
                 Rd_Out => Rd_EX 
         );
 
+    ForwardingUnit_inst: ForwardingUnit
+        PORT MAP (
+                Rs_EX => Rs_EX,
+                Rt_EX => Rt_EX,
+                Rdest_MEM => Rdest_MEM,
+                Rdest_WB => Rdest_WB,
+                RegWrite_MEM => RegWrite_MEM,
+                RegWrite_WB => RegWrite_WB,
+                ForwardA => ForwardA,
+                ForwardB => ForwardB
+        );
+
     ULA_inst: ULA 
         PORT MAP (
-                A => ReadData1_EX,
+                A => Mux_Forwarding_A,
                 B => Mux_ULA_B,
                 ALU_Op => ALUop_EX,
                 Result => ALUout_EX,
@@ -263,26 +276,35 @@ BEGIN
 
 -- MUXes
     WITH PC_MUX SELECT
-    PC_In <= BranchAddr_MEM WHEN "01",
-            JMP_Address WHEN "10",
+        PC_In <= BranchAddr_MEM WHEN "01",
+        JMP_Address WHEN "10",
 	    PCplus2 WHEN OTHERS;
 
     WITH RegDst_EX SELECT
-    Rdest_EX <= Rt_EX WHEN '0',
+        Rdest_EX <= Rt_EX WHEN '0',
 	    Rd_EX WHEN OTHERS;
 
     WITH ALUsrc_EX SELECT
-    Mux_ULA_B <= ReadData2_EX WHEN '0',
+        Mux_ULA_B <= MUX_Forwarding_B WHEN '0',
 	    SignExt_EX WHEN OTHERS;
 
     WITH MemtoReg_WB SELECT
-    Data_WB <= ReadData_WB WHEN '1',
+        Data_WB <= ReadData_WB WHEN '1',
 	    ALUout_WB WHEN OTHERS;
 
+    WITH ForwardA SELECT
+        MUX_Forwarding_A <= ALUout_MEM WHEN "10",
+        Data_WB WHEN "01",
+        ReadData1_EX WHEN OTHERS;
+
+    WITH ForwardB SELECT
+        MUX_Forwarding_B <= ALUout_MEM WHEN "10",
+        Data_WB WHEN "01",
+        ReadData2_EX WHEN OTHERS;
 
 -- Disp7 <= colocar alguma coisa aqui depois;
     Disp6 <= '0' & Instruction_ID(15 DOWNTO 13);
-    Disp5 <= ReadData1_EX(3 DOWNTO 0);
+    Disp5 <= MUX_Forwarding_A(3 DOWNTO 0);
     Disp4 <= Mux_ULA_B(3 DOWNTO 0);
     Disp3 <= ALUout_MEM(3 DOWNTO 0);
     Disp2 <= ReadData_MEM(3 DOWNTO 0);
@@ -303,20 +325,17 @@ BEGIN
     LEDR(17 DOWNTO 10) <= PC_Out(7 DOWNTO 0);
     LEDR(9) <= '0';
     LEDR(8) <= ALUop_ID;
-    LEDR(7) <= ALUsrc_EX;
-    LEDR(6) <= RegDst_EX;
-    LEDR(5) <= RegWrite_WB;
-    LEDR(4) <= MemtoReg_WB;
-    LEDR(3) <= MemRead_MEM;
-    LEDR(2) <= MemWrite_MEM;
-    LEDR(1) <= Branch_MEM;
+    LEDR(7) <= ALUsrc_ID;
+    LEDR(6) <= RegDst_ID;
+    LEDR(5) <= RegWrite_ID;
+    LEDR(4) <= MemtoReg_ID;
+    LEDR(3) <= MemRead_ID;
+    LEDR(2) <= MemWrite_ID;
+    LEDR(1) <= Branch_ID;
     LEDR(0) <= Jump_ID;
 
 -- LEDS Verdes
     LEDG(0) <= PCsrc;
     LEDG(2) <= Instruction_ID(0) WHEN (Instruction_ID(15 DOWNTO 13) = "011") ELSE '0';
---
---
---
 
 END Behavior;

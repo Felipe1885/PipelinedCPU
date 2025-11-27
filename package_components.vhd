@@ -138,7 +138,7 @@ PACKAGE package_components IS
             PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
             --Endereços
-            --Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
             Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
             Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 
@@ -165,7 +165,7 @@ PACKAGE package_components IS
             PCplus2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
             --Endereços
-            --Rs_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+            Rs_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
             Rt_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
             Rd_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
         );
@@ -294,6 +294,21 @@ PACKAGE package_components IS
             button: in std_logic;
             clk: in std_logic;
             debounced_button: out std_logic
+        );
+    END COMPONENT;
+    
+
+    -- Componente da Forwarding Unit
+    COMPONENT ForwardingUnit IS
+        PORT (
+            Rs_EX: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            Rt_EX: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            Rdest_MEM: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            Rdest_WB: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            RegWrite_MEM: IN STD_LOGIC;
+            RegWrite_WB: IN STD_LOGIC;
+            ForwardA: OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+            ForwardB: OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
         );
     END COMPONENT;
     

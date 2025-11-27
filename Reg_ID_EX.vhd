@@ -31,7 +31,7 @@ ENTITY Reg_ID_EX IS
         PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        --Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
         Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
         Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
 
@@ -57,7 +57,7 @@ ENTITY Reg_ID_EX IS
         PCplus2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        --Rs_Out: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rs_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
         Rt_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
         Rd_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)  -- só para forwarding
     );
@@ -120,9 +120,9 @@ BEGIN
 
 
     --Endereços (4 bits)
-    --Reg_Rs: Registrador 
-    --    GENERIC MAP (N => 4)
-    --    PORT MAP (d_InReg => Rs_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rs_Out);
+    Reg_Rs: Registrador 
+        GENERIC MAP (N => 4)
+        PORT MAP (d_InReg => Rs_In, En_Reg => '1', Clk => Clk, Reset => Flush, d_OutReg => Rs_Out);
 
     Reg_Rt: Registrador 
         GENERIC MAP (N => 4)
