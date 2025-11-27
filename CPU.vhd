@@ -13,16 +13,16 @@ ENTITY CPU IS
 END CPU;
 
 ARCHITECTURE Behavior OF CPU IS
-        -- Sinais globais
+    -- Sinais globais
         signal Clk, Reset: STD_LOGIC;
 
 
-        -- Sinais internos (IF)
+    -- Sinais internos (IF)
         -- Dados
         signal PC_In, PC_Out, PCplus2, Instruction_IF: STD_LOGIC_VECTOR(15 DOWNTO 0);
 
 
-        -- Sinais internos (ID)
+    -- Sinais internos (ID)
         -- Dados
         signal PCplus2_ID, Instruction_ID, ReadData1_ID, ReadData2_ID, SignExt_ID: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
@@ -30,7 +30,7 @@ ARCHITECTURE Behavior OF CPU IS
         -- Endereços
 
 
-        -- Sinais internos (EX)
+    -- Sinais internos (EX)
         -- Dados
         signal PCplus2_EX, ReadData1_EX, ReadData2_EX, SignExt_EX, ALUout_EX, Mux_ULA_B, BranchAddr_EX: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
@@ -39,7 +39,7 @@ ARCHITECTURE Behavior OF CPU IS
         signal Rdest_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
         
-        -- Sinais internos (MEM)
+    -- Sinais internos (MEM)
         -- Dados
         signal WriteData_MEM, BranchAddr_MEM, ALUout_MEM, ReadData_MEM: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
@@ -48,7 +48,7 @@ ARCHITECTURE Behavior OF CPU IS
         signal Rdest_MEM, Rt_EX, Rd_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 
-        -- Sinais internos (WB)
+    -- Sinais internos (WB)
         -- Dados
         signal WriteData_WB, ReadData_WB, ALUout_WB, Data_WB: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
@@ -56,10 +56,12 @@ ARCHITECTURE Behavior OF CPU IS
         -- Endereços
         signal Rdest_WB: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
-        --Sinais extras
-        SIGNAL PCsrc : STD_LOGIC;
-        SIGNAL JMP_Address : STD_LOGIC_VECTOR(15 DOWNTO 0);
-        SIGNAL PC_MUX : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    --Sinais extras
+        signal PCsrc : STD_LOGIC;
+        signal JMP_Address : STD_LOGIC_VECTOR(15 DOWNTO 0);
+        signal PC_MUX : STD_LOGIC_VECTOR(1 DOWNTO 0);
+        signal Jump_Target : std_logic_vector(12 downto 0);
+        
 BEGIN
 		  
     PC_inst: PC 
@@ -83,7 +85,7 @@ BEGIN
                 Cin => '0',
                 S => PCplus2,
                 Cout => OPEN
-        ); --ADDER PRO PC
+        );
     
     Reg_IF_ID_inst: Reg_IF_ID 
         PORT MAP(
@@ -173,7 +175,7 @@ BEGIN
     ULA_inst: ULA 
         PORT MAP (
                 A => ReadData1_EX,
-                B => Mux_ULA_B,         -- fazer mux do B da ULA
+                B => Mux_ULA_B,
                 ALU_Op => ALUop_EX,
                 Result => ALUout_EX,
                 Zero => Zero_EX
@@ -186,7 +188,7 @@ BEGIN
                 Cin => '0',
                 S => BranchAddr_EX,
                 Cout => OPEN
-        ); --ADDER PRO BRANCH          
+        );       
                 
     Reg_EX_MEM_inst: Reg_EX_MEM
         PORT MAP(
@@ -202,7 +204,7 @@ BEGIN
                 BranchAddr_In => BranchAddr_EX,
                 ALUout_In => ALUout_EX,
                 WriteData_In => ReadData2_EX,
-                Rdest_In => Rdest_EX,                   --fazer o mux para escolher rt ou rd
+                Rdest_In => Rdest_EX,
                 
                 -- Outputs
                 Branch_Out => Branch_MEM,
@@ -214,7 +216,7 @@ BEGIN
                 BranchAddr_Out => BranchAddr_MEM,
                 ALUout_Out => ALUout_MEM,
                 WriteData_Out => WriteData_MEM,
-                Rdest_Out => Rdest_MEM                  --fazer o mux para escolher rt ou rd
+                Rdest_Out => Rdest_MEM
         );
                 
     DataMemory_inst: DataMemory 
@@ -241,180 +243,80 @@ BEGIN
                 -- Outputs
                 RegWrite_Out => RegWrite_WB,
                 MemtoReg_Out => MemtoReg_WB,
-                ReadData_Out => ReadData_WB,                --fazer mux entre esse sinal e ALUout_WB, para sair Data_WB
-                ALUout_Out => ALUout_WB,                    --fazer mux entre esse sinal e ReadData_WB, para sair Data_WB
+                ReadData_Out => ReadData_WB,
+                ALUout_Out => ALUout_WB,
                 Rdest_Out => Rdest_WB
         );
 
-PCsrc <= (Branch_MEM)AND(Zero_MEM);
-JMP_Address <= PCplus2_ID(15 DOWNTO 13) & SignExt_ID(12 DOWNTO 0);
-PC_MUX <= Jump_ID & PCsrc;
 
-WITH PC_MUX SELECT
-PC_In <= BranchAddr_MEM WHEN "01",
-        JMP_Address WHEN "10",
-	PCplus2 WHEN OTHERS;
+-- Clock e Reset
+    Reset <= NOT KEY(3);
+    inst_Debouncer: Debouncing_Button_VHDL PORT MAP (NOT KEY(0), CLOCK_50, Clk);
 
-WITH RegDst_EX SELECT
-Rdest_EX <= Rt_EX WHEN '0',
-	Rd_EX WHEN OTHERS;
+-- Sinais para os MUXes
+    Jump_Target <= Instruction_ID(12 downto 0);
+    JMP_Address <= PCplus2_ID(15 downto 13) & Jump_Target;
+    PCsrc <= (Branch_MEM)AND(Zero_MEM);
+    PC_MUX <= Jump_ID & PCsrc;
 
-WITH ALUsrc_EX SELECT
-Mux_ULA_B <= ReadData2_EX WHEN '0',
-	SignExt_EX WHEN OTHERS;
+-- MUXes
+    WITH PC_MUX SELECT
+    PC_In <= BranchAddr_MEM WHEN "01",
+            JMP_Address WHEN "10",
+	    PCplus2 WHEN OTHERS;
 
-WITH MemtoReg_WB SELECT
-Data_WB <= ReadData_WB WHEN '1',
-	ALUout_WB WHEN OTHERS;
+    WITH RegDst_EX SELECT
+    Rdest_EX <= Rt_EX WHEN '0',
+	    Rd_EX WHEN OTHERS;
 
-    WITH -- SELECT					
-        HEX7 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
-	 
-	 WITH -- SELECT			
-        HEX6 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
-	 
-	 WITH -- SELECT
-        HEX5 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
-	 
-	 WITH -- SELECT	
-        HEX4 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
+    WITH ALUsrc_EX SELECT
+    Mux_ULA_B <= ReadData2_EX WHEN '0',
+	    SignExt_EX WHEN OTHERS;
 
-    WITH -- SELECT
-        HEX3 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
+    WITH MemtoReg_WB SELECT
+    Data_WB <= ReadData_WB WHEN '1',
+	    ALUout_WB WHEN OTHERS;
 
-    WITH -- SELECT		
-        HEX2 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
 
-    WITH -- SELECT			
-        HEX1 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
-    WITH -- SELECT						
-        HEX0 <= "0000001" WHEN "0000",
-                "1001111" WHEN "0001",
-                "0010010" WHEN "0010",
-                "0000110" WHEN "0011",
-                "1001100" WHEN "0100",
-                "0100100" WHEN "0101",
-                "0100000" WHEN "0110",
-                "0001111" WHEN "0111",
-                "0000000" WHEN "1000",
-                "0000100" WHEN "1001",
-                "0001000" WHEN "1010",
-                "1100000" WHEN "1011",
-                "0110001" WHEN "1100",
-                "1000010" WHEN "1101",
-                "0110000" WHEN "1110",
-                "0111000" WHEN "1111",
-                "1111111" WHEN OTHERS;
+-- Sinais dos displays 7 segmentos
+    signal Disp0, Disp1, Disp2, Disp3, Disp4, Disp5, Disp6, Disp7: STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+-- Disp7 <= colocar alguma coisa aqui depois;
+    Disp6 <= '0' & Instruction_ID(15 DOWNTO 13);
+    Disp5 <= ReadData1_EX(3 DOWNTO 0);
+    Disp4 <= Mux_ULA_B(3 DOWNTO 0);
+    Disp3 <= ALUout_MEM(3 DOWNTO 0);
+    Disp2 <= ReadData_MEM(3 DOWNTO 0);
+    Disp1 <= Data_WB(3 DOWNTO 0);
+    Disp0 <= Rdest_WB;
+
+-- PORT MAP dos displays 7 segmentos
+    Display_OPcode: Display7segs PORT MAP(num => Disp6, seg => HEX6);
+    Display_ReadData1: Display7segs PORT MAP(num => Disp5, seg => HEX5);
+    Display_MuxULA: Display7segs PORT MAP(num => Disp4, seg => HEX4);
+    Display_ALUout: Display7segs PORT MAP(num => Disp3, seg => HEX3);
+    Display_ReadDataMem: Display7segs PORT MAP(num => Disp2, seg => HEX2);
+    Display_DataWB: Display7segs PORT MAP(num => Disp1, seg => HEX1);
+    Display_RdestWB: Display7segs PORT MAP(num => Disp0, seg => HEX0);
+
+
+-- LEDS Vermelhos
+    LEDR(17 DOWNTO 10) <= PC_Out(7 DOWNTO 0);
+    LEDR(9) <= '0';
+    LEDR(8) <= ALUop_ID;
+    LEDR(7) <= ALUsrc_EX;
+    LEDR(6) <= RegDst_EX;
+    LEDR(5) <= RegWrite_WB;
+    LEDR(4) <= MemtoReg_WB;
+    LEDR(3) <= MemRead_MEM;
+    LEDR(2) <= MemWrite_MEM;
+    LEDR(1) <= Branch_MEM;
+    LEDR(0) <= Jump_ID;
+
+-- LEDS Verdes (pensar ainda, mas da pra por o sinal "Zero" da ULA e o branch taken)
+--
+--
+--
+--
+
 END Behavior;

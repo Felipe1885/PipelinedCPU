@@ -278,4 +278,23 @@ PACKAGE package_components IS
             );
     END COMPONENT;
 
+
+    -- Componente do Display 7 segmentos
+    COMPONENT Display7segs IS
+        PORT (
+            num : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+            seg : OUT STD_LOGIC_VECTOR(6 DOWNTO 0)
+        );
+    END COMPONENT;
+
+
+    -- Componente do Debouncing Button
+    COMPONENT Debouncing_Button_VHDL IS
+        PORT (
+            button: in std_logic;
+            clk: in std_logic;
+            debounced_button: out std_logic
+        );
+    END COMPONENT;
+    
 END PACKAGE package_components;
