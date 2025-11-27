@@ -8,7 +8,7 @@ ENTITY CPU IS
             LEDR: out STD_LOGIC_VECTOR(17 DOWNTO 0);
             LEDG: out STD_LOGIC_VECTOR(7 DOWNTO 0);
             CLOCK_50: IN STD_LOGIC;
-            HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7: OUT STD_LOGIC_VECTOR(0 TO 6)
+            HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6: OUT STD_LOGIC_VECTOR(0 TO 6)
         );
 END CPU;
 
@@ -312,9 +312,9 @@ BEGIN
     LEDR(1) <= Branch_MEM;
     LEDR(0) <= Jump_ID;
 
--- LEDS Verdes (pensar ainda, mas da pra por o sinal "Zero" da ULA e o branch taken)
+-- LEDS Verdes
     LEDG(0) <= PCsrc;
-    LEDG(2) <= Instruction_ID(0) WHEN (Instruction_ID(15 DOWNTO 13) = '010');
+    LEDG(2) <= Instruction_ID(0) WHEN (Instruction_ID(15 DOWNTO 13) = "011") ELSE '0';
 --
 --
 --
