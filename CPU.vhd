@@ -39,29 +39,31 @@ ARCHITECTURE Behavior OF CPU IS
         signal Rdest_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
 
         
-    -- Sinais internos (MEM)
+        -- Sinais internos (MEM)
         -- Dados
         signal WriteData_MEM, BranchAddr_MEM, ALUout_MEM, ReadData_MEM: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
         signal Branch_MEM, Zero_MEM, MemRead_MEM, MemWrite_MEM, RegWrite_MEM, MemtoReg_MEM: STD_LOGIC;
         -- Endereços
         signal Rdest_MEM, Rt_EX, Rd_EX: STD_LOGIC_VECTOR(3 DOWNTO 0);
-
-
-    -- Sinais internos (WB)
+        
+        
+        -- Sinais internos (WB)
         -- Dados
         signal WriteData_WB, ReadData_WB, ALUout_WB, Data_WB: STD_LOGIC_VECTOR(15 DOWNTO 0);
         -- Controle
         signal RegWrite_WB, MemtoReg_WB: STD_LOGIC;
         -- Endereços
         signal Rdest_WB: STD_LOGIC_VECTOR(3 DOWNTO 0);
-
-    --Sinais extras
+        
+        --Sinais extras
         signal PCsrc : STD_LOGIC;
         signal JMP_Address : STD_LOGIC_VECTOR(15 DOWNTO 0);
         signal PC_MUX : STD_LOGIC_VECTOR(1 DOWNTO 0);
         signal Jump_Target : std_logic_vector(12 downto 0);
         
+        -- Sinais dos Displays de 7 Segmentos
+        signal Disp0, Disp1, Disp2, Disp3, Disp4, Disp5, Disp6, Disp7: STD_LOGIC_VECTOR(3 DOWNTO 0);
 BEGIN
 		  
     PC_inst: PC 
@@ -278,9 +280,6 @@ BEGIN
 	    ALUout_WB WHEN OTHERS;
 
 
--- Sinais dos displays 7 segmentos
-    signal Disp0, Disp1, Disp2, Disp3, Disp4, Disp5, Disp6, Disp7: STD_LOGIC_VECTOR(15 DOWNTO 0);
-
 -- Disp7 <= colocar alguma coisa aqui depois;
     Disp6 <= '0' & Instruction_ID(15 DOWNTO 13);
     Disp5 <= ReadData1_EX(3 DOWNTO 0);
@@ -314,7 +313,8 @@ BEGIN
     LEDR(0) <= Jump_ID;
 
 -- LEDS Verdes (pensar ainda, mas da pra por o sinal "Zero" da ULA e o branch taken)
---
+    LEDG(0) <= PCsrc;
+    LEDG(2) <= Instruction_ID(0) WHEN (Instruction_ID(15 DOWNTO 13) = '010');
 --
 --
 --

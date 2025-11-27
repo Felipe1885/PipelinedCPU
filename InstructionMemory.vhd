@@ -12,11 +12,11 @@ END InstructionMemory;
 
 ARCHITECTURE Behavior OF InstructionMemory IS
 
-TYPE MemArray IS ARRAY (65535 DOWNTO 0) OF STD_LOGIC_VECTOR (7 DOWNTO 0);
+TYPE MemArray IS ARRAY (512 DOWNTO 0) OF STD_LOGIC_VECTOR (7 DOWNTO 0);
 SIGNAL Mem : MemArray := (        
 
-        -- Endereço 0x0000 (0): LW $r1, 2($r0) 
-        0 => b"00100000",  
+        -- Endereço 0x0000 (0): LW $r1, 2($r4) 
+        0 => b"00101000",  
         1 => b"00100010",   
 
         -- 3 NOPs do load
@@ -83,6 +83,19 @@ SIGNAL Mem : MemArray := (
         -- SW $r3, 10($r0)
         34 => b"01000000",
         35 => b"01101010",
+
+        -- 2 NOPs do store
+        -- NOP
+        36 => b"00000000", 
+        37 => b"00000000", 
+        -- NOP
+        38 => b"00000000", 
+        39 => b"00000000",         
+
+
+        -- LW $r3, 10($r0)
+        40 => b"00100000"
+        41 => b"01101010"
 
 
         -- JMP 0

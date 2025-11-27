@@ -14,7 +14,14 @@ END DataMemory;
 ARCHITECTURE Behavior OF DataMemory IS
 
 TYPE MemArray IS ARRAY (512 DOWNTO 0) OF STD_LOGIC_VECTOR (7 DOWNTO 0);
-SIGNAL Mem : MemArray;
+SIGNAL Mem : MemArray := (
+    -- Dado na memória para o load
+    2 => b"00000000",
+    3 => b"00000010",
+
+    OTHERS => b"00000000"
+);
+
 SIGNAL IntegerAddrs : integer;
 
 	BEGIN
