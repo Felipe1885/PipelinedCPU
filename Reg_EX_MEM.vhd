@@ -25,7 +25,7 @@ ENTITY Reg_EX_MEM IS
         WriteData_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rdest_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);             --rt ou rd, se for fazer o forwarding
+        Rdest_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 
         --Outputs
@@ -45,7 +45,7 @@ ENTITY Reg_EX_MEM IS
         WriteData_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rdest_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)             --rt ou rd, se for fazer o forwarding
+        Rdest_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
     );
 END Reg_EX_MEM;
 

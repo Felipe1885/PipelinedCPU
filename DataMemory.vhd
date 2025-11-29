@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.all ;
 use IEEE.NUMERIC_STD.ALL;
 USE work.package_components.all;
 
---Entidade da Memoriua
+-- Entidade da Memória de Dados
 ENTITY DataMemory IS
 	PORT ( Address, WriteData : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
            MemWrite, MemRead, CLK : IN STD_LOGIC;

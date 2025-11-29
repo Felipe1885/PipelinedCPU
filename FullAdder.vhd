@@ -2,7 +2,7 @@ LIBRARY ieee ;
 USE ieee.std_logic_1164.all ;
 USE work.package_components.all;
 
---Entidade do full adder
+--Entidade do Full Adder
 ENTITY FullAdder IS
 	PORT (A, B: IN STD_LOGIC;
 		S: OUT STD_LOGIC;

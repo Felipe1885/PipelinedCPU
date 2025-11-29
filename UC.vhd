@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+-- Entidade da Unidade de Controle
 ENTITY UC IS
     PORT( OpCode: IN STD_LOGIC_VECTOR(2 DOWNTO 0);
           Funct: IN STD_LOGIC;

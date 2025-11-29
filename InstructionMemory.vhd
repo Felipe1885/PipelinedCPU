@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.all ;
 use IEEE.NUMERIC_STD.ALL;
 USE work.package_components.all;
 
---Entidade da Memória
+--Entidade da Memória de Instruções
 ENTITY InstructionMemory IS
 	PORT ( Address : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
            Instruction : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)

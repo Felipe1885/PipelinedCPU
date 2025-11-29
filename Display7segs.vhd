@@ -1,6 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
+-- Entidade do display de 7 segmentos
 ENTITY Display7segs IS
     PORT (
         num : IN STD_LOGIC_VECTOR(3 DOWNTO 0);

@@ -31,9 +31,9 @@ ENTITY Reg_ID_EX IS
         PCplus2_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
-        Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
-        Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
+        Rs_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rt_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rd_In: IN STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 
         -- Outputs
@@ -57,9 +57,9 @@ ENTITY Reg_ID_EX IS
         PCplus2_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
         --Endereços
-        Rs_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
-        Rt_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0); -- só para forwarding
-        Rd_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)  -- só para forwarding
+        Rs_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rt_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        Rd_Out: OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
     );
 END Reg_ID_EX;
 

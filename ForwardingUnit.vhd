@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+-- Entidade da Unidade de Encaminhamento
 ENTITY ForwardingUnit IS
     PORT (
         Rs_EX: IN STD_LOGIC_VECTOR(3 DOWNTO 0);

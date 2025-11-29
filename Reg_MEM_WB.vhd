@@ -6,7 +6,7 @@ USE work.package_components.all;
 ENTITY Reg_MEM_WB IS
     PORT (
         Clk: IN STD_LOGIC;
-        Flush: IN STD_LOGIC;    --tem sinal de flush?????
+        Flush: IN STD_LOGIC;
 
         --Inputs
         --Sinais de Controle (WB)

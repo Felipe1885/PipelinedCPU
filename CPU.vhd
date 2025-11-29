@@ -2,6 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+-- Entidade da CPU Pipelined de 16 bits
 ENTITY CPU IS
     PORT (  SW: in STD_LOGIC_VECTOR(17 DOWNTO 0);
             KEY: in STD_LOGIC_VECTOR(3 DOWNTO 0);
@@ -153,7 +154,7 @@ BEGIN
                 ReadData2_In => ReadData2_ID,
                 SignExt_In => SignExt_ID,
                 PCplus2_In => PCplus2_ID,
-                Rs_In => Instruction_ID(12 DOWNTO 9), --so para o forwarding
+                Rs_In => Instruction_ID(12 DOWNTO 9),
                 Rt_In => Instruction_ID(8 DOWNTO 5),
                 Rd_In => Instruction_ID(4 DOWNTO 1),
 
@@ -170,7 +171,7 @@ BEGIN
                 ReadData2_Out => ReadData2_EX,
                 SignExt_Out => SignExt_EX,
                 PCplus2_Out => PCplus2_EX,
-                Rs_Out => Rs_EX, --so para o forwarding
+                Rs_Out => Rs_EX,
                 Rt_Out => Rt_EX,
                 Rd_Out => Rd_EX 
         );
@@ -337,5 +338,5 @@ BEGIN
 -- LEDS Verdes
     LEDG(0) <= PCsrc;
     LEDG(2) <= Instruction_ID(0) WHEN (Instruction_ID(15 DOWNTO 13) = "011") ELSE '0';
-
+    LEDG(4) <= '1' WHEN (ForwardA /= "00" OR ForwardB /= "00") ELSE '0';
 END Behavior;

@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
---Banco de 16 registradores de 16 bits
+-- Banco de 16 registradores de 16 bits
 ENTITY RegisterBank IS
 	PORT (
 		RegWrite: IN  STD_LOGIC;
@@ -20,7 +20,7 @@ END RegisterBank;
 ARCHITECTURE Behavior OF RegisterBank IS
 	
     -- Sinal para a saída dos registradores de 16 bits
-	SIGNAL reg0  : STD_LOGIC_VECTOR(15 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL reg0  : STD_LOGIC_VECTOR(15 DOWNTO 0);
 	SIGNAL reg1  : STD_LOGIC_VECTOR(15 DOWNTO 0) := (OTHERS => '0');
 	SIGNAL reg2  : STD_LOGIC_VECTOR(15 DOWNTO 0) := (OTHERS => '0');
 	SIGNAL reg3  : STD_LOGIC_VECTOR(15 DOWNTO 0) := (OTHERS => '0');
@@ -43,7 +43,7 @@ ARCHITECTURE Behavior OF RegisterBank IS
 		
 BEGIN
 	-- Decoder para os sinais de escrita dos registradores (estágio WB)
-	WriteEn0  <= '1' WHEN (RegWrite = '1' AND WriteReg = "0000") ELSE '0'; -- reg $zero??? n sei
+	WriteEn0  <= '0';
 	WriteEn1  <= '1' WHEN (RegWrite = '1' AND WriteReg = "0001") ELSE '0';
 	WriteEn2  <= '1' WHEN (RegWrite = '1' AND WriteReg = "0010") ELSE '0';
 	WriteEn3  <= '1' WHEN (RegWrite = '1' AND WriteReg = "0011") ELSE '0';
@@ -62,7 +62,7 @@ BEGIN
 
 
 	-- Port Map dos registradores para escrita neles (cada um escreve WriteData quando seu enable = '1')
-	reg0_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn0,  Clk => Clk, Reset => Reset, d_OutReg => reg0 );
+	reg0 <= (OTHERS => '0'); -- Registrador $r0 é constante 0
 	reg1_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn1,  Clk => Clk, Reset => Reset, d_OutReg => reg1 );
 	reg2_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn2,  Clk => Clk, Reset => Reset, d_OutReg => reg2 );
 	reg3_i: Registrador GENERIC MAP (N => 16) PORT MAP ( d_InReg => WriteData, En_Reg => WriteEn3,  Clk => Clk, Reset => Reset, d_OutReg => reg3 );

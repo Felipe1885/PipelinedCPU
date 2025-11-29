@@ -2,11 +2,12 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 USE work.package_components.all;
 
+-- Entidade do Contador de Programa (PC)
 ENTITY PC IS
     PORT (
         Clk: IN STD_LOGIC;
         Reset: IN STD_LOGIC;
-        --PCwrite: IN STD_LOGIC; -- colocar se for fazer tratamento de hazard de controle
+        --PCwrite: IN STD_LOGIC;
         PC_In: IN STD_LOGIC_VECTOR(15 DOWNTO 0);
         PC_Out: OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
