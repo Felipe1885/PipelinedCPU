@@ -9,7 +9,7 @@ ENTITY CPU IS
             LEDR: out STD_LOGIC_VECTOR(17 DOWNTO 0);
             LEDG: out STD_LOGIC_VECTOR(7 DOWNTO 0);
             CLOCK_50: IN STD_LOGIC;
-            HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6: OUT STD_LOGIC_VECTOR(0 TO 6)
+            HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7: OUT STD_LOGIC_VECTOR(0 TO 6)
         );
 END CPU;
 
@@ -303,23 +303,24 @@ BEGIN
         Data_WB WHEN "01",
         ReadData2_EX WHEN OTHERS;
 
--- Disp7 <= colocar alguma coisa aqui depois;
-    Disp6 <= '0' & Instruction_ID(15 DOWNTO 13);
-    Disp5 <= MUX_Forwarding_A(3 DOWNTO 0);
-    Disp4 <= Mux_ULA_B(3 DOWNTO 0);
-    Disp3 <= ALUout_MEM(3 DOWNTO 0);
-    Disp2 <= ReadData_MEM(3 DOWNTO 0);
-    Disp1 <= Data_WB(3 DOWNTO 0);
-    Disp0 <= Rdest_WB;
+    Disp7 <= MUX_Forwarding_A(3 DOWNTO 0);
+    Disp6 <= Mux_ULA_B(3 DOWNTO 0);
+    Disp5 <= ALUout_MEM(3 DOWNTO 0);
+    Disp4 <= WriteData_MEM(3 DOWNTO 0);
+    Disp3 <= ReadData_MEM(3 DOWNTO 0);
+    Disp2 <= Data_WB(3 DOWNTO 0);
+    Disp1 <= Rdest_WB;
+	 Disp0 <= '0' & Instruction_ID(15 DOWNTO 13);
 
 -- PORT MAP dos displays 7 segmentos
-    Display_OPcode: Display7segs PORT MAP(num => Disp6, seg => HEX6);
-    Display_ReadData1: Display7segs PORT MAP(num => Disp5, seg => HEX5);
-    Display_MuxULA: Display7segs PORT MAP(num => Disp4, seg => HEX4);
-    Display_ALUout: Display7segs PORT MAP(num => Disp3, seg => HEX3);
-    Display_ReadDataMem: Display7segs PORT MAP(num => Disp2, seg => HEX2);
-    Display_DataWB: Display7segs PORT MAP(num => Disp1, seg => HEX1);
-    Display_RdestWB: Display7segs PORT MAP(num => Disp0, seg => HEX0);
+    Display_OPcode: Display7segs PORT MAP(num => Disp0, seg => HEX0);
+    Display_MuxForwarding_A: Display7segs PORT MAP(num => Disp7, seg => HEX7);
+    Display_MuxULA_B: Display7segs PORT MAP(num => Disp6, seg => HEX6);
+    Display_ALUout: Display7segs PORT MAP(num => Disp5, seg => HEX5);
+	Display_WriteData_MEM: Display7segs PORT MAP(num => Disp4, seg => HEX4);
+    Display_ReadDataMem: Display7segs PORT MAP(num => Disp3, seg => HEX3);
+    Display_DataWB: Display7segs PORT MAP(num => Disp2, seg => HEX2);
+    Display_RdestWB: Display7segs PORT MAP(num => Disp1, seg => HEX1);
 
 
 -- LEDS Vermelhos
